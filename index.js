@@ -24,6 +24,7 @@ app.get("/", (req, res) => {
 async function run() {
   try {
     const users = client.db("Users").collection("Users");
+    const tasks = client.db("tasks").collection("task");
 
     app.post("/insertusertodb", async (req, res) => {
       const userInfo = req.body;
@@ -42,6 +43,20 @@ async function run() {
       } else {
         res.send({ isUserAlreadyExists: false });
       }
+    });
+    app.post("/addtask", async (req, res) => {
+      const task = req.body;
+      console.log(task);
+      const result = await tasks.insertOne(task);
+      res.send(result);
+    });
+    app.get("/myalltask", async (req, res) => {
+      const email = req.query.email;
+      const query = { taskProviderEmail: email };
+      // console.log(query);
+      const result = await tasks.find(query).toArray();
+      // console.log(result);
+      res.send(result);
     });
   } finally {
   }
